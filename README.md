@@ -24,7 +24,7 @@ Copy (using scp, winscp) the preUpgradeCheck.py to your home directory on the Al
     cp preUpgradeCheck.py ~/.
 Or directly download the code from GitHub:
 
-    curl https://raw.githubusercontent.com/mandeepsingh-alation/preUpgradeCheck/master/preUpgradeCheck.py --output preUpgradeCheck.py
+    curl [NEW URL HERE] --output preUpgradeCheck.py
 Run the python code as sudo: (outside the Alation shell)
 
     sudo python preUpgradeCheck.py 
