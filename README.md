@@ -10,7 +10,7 @@
     1. Replication mode check
     2. Minimum space requirement check
     3. Data drive and backup drive space and mount point check
-    4. Backup health check
+    4. Backup System health check
     5. postgreSQL size check
     6. Datadog activation check
     
