@@ -2,8 +2,6 @@
 # import libraries
 import subprocess
 import re
-from os import listdir
-import csv
 import datetime
 import time
 import json
@@ -32,7 +30,7 @@ def versionParser(config):
     temp1 = temp[1].rstrip()
     return([temp0,temp1])
 
-# the following function processes the response from df -BG command run on
+# the following function processes the response from df -Ph command run on
 # exactly one path
 def processDfOutput(response):
     # process response
@@ -165,13 +163,13 @@ def minSpaceCheck():
     # check if a minimum of MINDISKSPACE GB space is free at /opt/alation/ by calling: df -h /opt/alation
     # define command
     cmd = b"""sudo chroot "/opt/alation/alation" /bin/su - alation
-    df -BG /"""
+    df -Ph /"""
     # run bash command and get response
     response = bashCMD(cmd)
     # get df readout
     installDfOutput = processDfOutput(response)
     # get remaining disk space
-    availSize = float(re.sub("\D", "", installDfOutput['Available']))
+    availSize = float(re.sub("\D", "", installDfOutput['Avail']))
     # check if there is at least MINDISKSPACE GB space available
     if availSize > MINDISKSPACE:
         print('Minimum {}GB disk space (available in /opt/alation = {}GB): '.format(MINDISKSPACE,availSize) + colPrint('OK!','G'))
@@ -192,7 +190,7 @@ def dataAndBackupDriveCheck():
     # data and backup mount check
     # define bash command for data drive
     cmd = b"""sudo chroot "/opt/alation/alation" /bin/su - alation
-    df -BG /data1/"""
+    df -Ph /data1/"""
     # run bash command and get response
     dataResponse = bashCMD(cmd)
     # get df readout
@@ -200,7 +198,7 @@ def dataAndBackupDriveCheck():
 
     # define bash command for backup drive
     cmd = b"""sudo chroot "/opt/alation/alation" /bin/su - alation
-    df -BG /data2/"""
+    df -Ph /data2/"""
     # run bash command and get response
     backupResponse = bashCMD(cmd)
     # get df readout
@@ -223,7 +221,7 @@ def dataAndBackupDriveCheck():
         print('Data and backup on different device: {}'.format(colPrint('FAIL!','R')))
 
     # compare backup disk size and data disk size
-    backupToDataRatio = float(re.sub("\D", "", backupDfOutput['1G-blocks']))/float(re.sub("\D", "", dataDfOutput['1G-blocks']))
+    backupToDataRatio = float(re.sub("\D", "", backupDfOutput['Size']))/float(re.sub("\D", "", dataDfOutput['Size']))
 
     # check if backup disk is at least MINBACKUPFACTOR the size of data disk
     if backupToDataRatio >= MINBACKUPFACTOR:
@@ -344,7 +342,7 @@ def mongoCheck(fullLog):
     fullLog['mongoSize'] = response.split('\t')[0]
 
     # check if available disk space is at least MONGOx the size of mongoDB
-    availDataSpace = float(re.sub("\D", "", fullLog['dataDirDf']['Available']))
+    availDataSpace = float(re.sub("\D", "", fullLog['dataDirDf']['Size']))
     #print('Space available in data drive: {}GB'.format(availDataSpace))
 
     if availDataSpace/mongoSize > MONGOx:
